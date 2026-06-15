@@ -232,4 +232,4 @@ The image is multi-stage, ~20 MB, and runs as a non-root user.
 
 ## License
 
-Choose whatever fits your organisation; this template ships without one.
+MIT — see [LICENSE](LICENSE).
