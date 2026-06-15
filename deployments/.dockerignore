@@ -1,0 +1,31 @@
+# Reduce build context size. Anything not needed inside the
+# container belongs in this list.
+
+.git
+.github
+.vscode
+.idea
+
+# Build artefacts
+bin/
+dist/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test outputs and caches
+coverage.out
+*.test
+.cache/
+
+# Local config and secrets
+.env
+.env.*
+*.local
+
+# Documentation we do not need in the image
+docs/
+plans/
+*.md
+!README.md

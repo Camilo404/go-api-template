@@ -1,0 +1,30 @@
+# --- Build artefacts ---
+bin/
+dist/
+*.exe
+*.dll
+*.so
+*.dylib
+out/
+
+# --- Go test/cache ---
+*.test
+*.out
+coverage.out
+coverage.html
+.cache/
+
+# --- Local environment & secrets ---
+.env
+.env.*
+*.local
+
+# --- Editors / OS ---
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# --- Logs ---
+*.log

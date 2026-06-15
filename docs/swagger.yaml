@@ -1,0 +1,289 @@
+basePath: /
+definitions:
+  github_com_yourorg_template-api_internal_models.APIError:
+    properties:
+      code:
+        example: not_found
+        type: string
+      message:
+        example: resource not found
+        type: string
+    type: object
+  github_com_yourorg_template-api_internal_models.CreateTaskInput:
+    properties:
+      description:
+        example: Whole milk, 2L
+        type: string
+      title:
+        example: Buy milk
+        type: string
+    type: object
+  github_com_yourorg_template-api_internal_models.Page:
+    properties:
+      page:
+        example: 1
+        type: integer
+      per_page:
+        example: 20
+        type: integer
+      total:
+        example: 42
+        type: integer
+    type: object
+  github_com_yourorg_template-api_internal_models.PaginatedResponse:
+    properties:
+      data: {}
+      page:
+        $ref: '#/definitions/github_com_yourorg_template-api_internal_models.Page'
+    type: object
+  github_com_yourorg_template-api_internal_models.Task:
+    properties:
+      completed:
+        example: false
+        type: boolean
+      created_at:
+        format: date-time
+        type: string
+      description:
+        example: Whole milk, 2L
+        type: string
+      id:
+        example: 1
+        type: integer
+      title:
+        example: Buy milk
+        type: string
+      updated_at:
+        format: date-time
+        type: string
+    type: object
+  github_com_yourorg_template-api_internal_models.UpdateTaskInput:
+    properties:
+      completed:
+        example: true
+        type: boolean
+      description:
+        example: Whole milk, 2L
+        type: string
+      title:
+        example: Buy milk
+        type: string
+    type: object
+  internal_handlers.HealthResponse:
+    properties:
+      started_at:
+        example: "2026-06-15T12:00:00Z"
+        type: string
+      status:
+        example: ok
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: platform@example.com
+    name: Platform Team
+    url: https://example.com
+  description: REST API template written in Go (net/http) with structured logging,
+    CORS, request IDs and graceful shutdown.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: https://example.com/terms
+  title: Template API
+  version: "1.0"
+paths:
+  /api/v1/tasks:
+    get:
+      description: Returns a paginated list of tasks. Defaults to page=1, per_page=20;
+        per_page is capped at 100.
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        maximum: 100
+        minimum: 1
+        name: per_page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_yourorg_template-api_internal_models.PaginatedResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_yourorg_template-api_internal_models.APIError'
+      summary: List tasks
+      tags:
+      - tasks
+    post:
+      consumes:
+      - application/json
+      description: Creates a new task and returns the persisted entity.
+      parameters:
+      - description: Task payload
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_yourorg_template-api_internal_models.CreateTaskInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_yourorg_template-api_internal_models.Task'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_yourorg_template-api_internal_models.APIError'
+      summary: Create a task
+      tags:
+      - tasks
+  /api/v1/tasks/{id}:
+    delete:
+      description: Permanently removes a task by its identifier.
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_yourorg_template-api_internal_models.APIError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_yourorg_template-api_internal_models.APIError'
+      summary: Delete a task
+      tags:
+      - tasks
+    get:
+      description: Returns a single task by its identifier.
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_yourorg_template-api_internal_models.Task'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_yourorg_template-api_internal_models.APIError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_yourorg_template-api_internal_models.APIError'
+      summary: Get a task
+      tags:
+      - tasks
+    patch:
+      consumes:
+      - application/json
+      description: Applies the provided fields. Both PUT and PATCH share the same
+        payload; omitted fields are left unchanged.
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Task payload
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_yourorg_template-api_internal_models.UpdateTaskInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_yourorg_template-api_internal_models.Task'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_yourorg_template-api_internal_models.APIError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_yourorg_template-api_internal_models.APIError'
+      summary: Update a task
+      tags:
+      - tasks
+    put:
+      consumes:
+      - application/json
+      description: Applies the provided fields. Both PUT and PATCH share the same
+        payload; omitted fields are left unchanged.
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Task payload
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_yourorg_template-api_internal_models.UpdateTaskInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_yourorg_template-api_internal_models.Task'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_yourorg_template-api_internal_models.APIError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_yourorg_template-api_internal_models.APIError'
+      summary: Update a task
+      tags:
+      - tasks
+  /health:
+    get:
+      description: Returns 200 OK with service uptime. Intended for liveness/readiness
+        probes.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.HealthResponse'
+      summary: Liveness probe
+      tags:
+      - health
+schemes:
+- http
+- https
+swagger: "2.0"
